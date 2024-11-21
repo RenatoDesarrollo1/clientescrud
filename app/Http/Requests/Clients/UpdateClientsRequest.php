@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Clients;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class UpdateClientsRequest extends FormRequest
 {
@@ -23,8 +24,8 @@ class UpdateClientsRequest extends FormRequest
     {
         return [
             'id' => ["required"],
-            'ruc' => ["required", "string", "size:11"],
-            'email' => ["required", "string", "max:255"],
+            'ruc' => ["required", "string", "size:11", Rule::unique('clients')->ignore($this->id)],
+            'email' => ["required", "string", "email", "max:255", Rule::unique('clients')->ignore($this->id)],
             'compname' => ["required", "string", "max:255"],
             'direction' => ["required", "string", "max:255"],
             'phone' => ["required", "string", "max:20"]
@@ -38,8 +39,11 @@ class UpdateClientsRequest extends FormRequest
             'ruc.required' => 'El ruc es requerido',
             'ruc.size' => 'El ruc debe tener 11 carácteres',
             'ruc.numeric' => 'El ruc debe ser numérico',
+            'ruc.unique' => 'El ruc debe ser único',
             'email.required' => 'El email es requerido',
             'email.max' => 'El email debe tener como máximo 255 carácteres',
+            'email.email' => 'El email no es válido',
+            'email.unique' => 'El email debe ser único',
             'compname.required' => 'La razón social es requerida',
             'compname.max' => 'La razón social debe tener como máximo 255 carácteres',
             'direction.required' => 'La dirección es requerida',
