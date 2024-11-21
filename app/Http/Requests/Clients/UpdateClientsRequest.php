@@ -23,7 +23,7 @@ class UpdateClientsRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'id' => ["required"],
+            'id' => ["required", "exists:clients"],
             'ruc' => ["required", "string", "size:11", Rule::unique('clients')->ignore($this->id)],
             'email' => ["required", "string", "email", "max:255", Rule::unique('clients')->ignore($this->id)],
             'compname' => ["required", "string", "max:255"],
@@ -36,6 +36,7 @@ class UpdateClientsRequest extends FormRequest
     {
         return [
             'id.required' => 'El id es requerido',
+            'id.exists' => 'No se encontró el cliente',
             'ruc.required' => 'El ruc es requerido',
             'ruc.size' => 'El ruc debe tener 11 carácteres',
             'ruc.numeric' => 'El ruc debe ser numérico',

@@ -49,7 +49,9 @@ class ClientsService implements ClientsServiceInt
     public function saveClient(SaveClientsRequest $client)
     {
         try {
-            ClientsModel::insert($client->validated());
+            $clientdata = $client->validated();
+
+            ClientsModel::insert($clientdata);
 
             return new DataResponse(200, [], "El cliente se ingresó correctamente");
         } catch (\Exception $e) {
@@ -59,9 +61,16 @@ class ClientsService implements ClientsServiceInt
     public function updateClient(UpdateClientsRequest $client)
     {
         try {
-            ClientsModel::where('id', $client->id)->update($client->validated());
+            $clientdata = $client->validated();
 
-            return new DataResponse(200, [], "El cliente se actualizó correctamente");
+
+            if (ClientsModel::where('active', '=', true)->exists()) {
+                ClientsModel::where('id', $clientdata["id"])->update($clientdata);
+
+                return new DataResponse(200, [], "El cliente se actualizó correctamente");
+            }
+
+            return new DataResponse(404, [], "No se encontró el cliente");
         } catch (\Exception $e) {
             return new DataResponse(500, [], $e->getMessage());
         }
@@ -69,9 +78,12 @@ class ClientsService implements ClientsServiceInt
     public function deleteClient(int $id)
     {
         try {
-            ClientsModel::where('id', $id)->update(['active' => false]);
+            if (ClientsModel::where('active', '=', true)->exists()) {
+                ClientsModel::where('id', $id)->update(['active' => false]);
 
-            return new DataResponse(200, [], "El cliente se eliminó correctamente");
+                return new DataResponse(200, [], "El cliente se eliminó correctamente");
+            }
+            return new DataResponse(404, [], "No se encontró el cliente");
         } catch (\Exception $e) {
             return new DataResponse(500, [], $e->getMessage());
         }
