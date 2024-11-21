@@ -17,7 +17,7 @@ class ClientsService implements ClientsServiceInt
         try {
             $compname = trim($request->compname) ?? "";
 
-            $clients = ClientsModel::where('active', '=', true);
+            $clients = ClientsModel::query();
 
             if ($compname != "") {
                 $clients = $clients->where('compname', 'LIKE', "{$compname}%");
@@ -33,7 +33,7 @@ class ClientsService implements ClientsServiceInt
     public function getClient(int $id)
     {
         try {
-            $client = ClientsModel::where('active', '=', true)->find($id);
+            $client = ClientsModel::find($id);
 
             if (isset($client)) {
                 return new DataResponse(200, $client->toArray());
@@ -64,7 +64,7 @@ class ClientsService implements ClientsServiceInt
             $clientdata = $client->validated();
 
 
-            if (ClientsModel::where('active', '=', true)->exists()) {
+            if (ClientsModel::where('id', $clientdata["id"])->exists()) {
                 ClientsModel::where('id', $clientdata["id"])->update($clientdata);
 
                 return new DataResponse(200, [], "El cliente se actualizó correctamente");
@@ -78,8 +78,8 @@ class ClientsService implements ClientsServiceInt
     public function deleteClient(int $id)
     {
         try {
-            if (ClientsModel::where('active', '=', true)->exists()) {
-                ClientsModel::where('id', $id)->update(['active' => false]);
+            if (ClientsModel::where('id', $id)->exists()) {
+                ClientsModel::where('id', $id)->delete();
 
                 return new DataResponse(200, [], "El cliente se eliminó correctamente");
             }
