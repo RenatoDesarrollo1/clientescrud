@@ -23,7 +23,7 @@ class ClientsService implements ClientsServiceInt
                 $clients = $clients->where('compname', 'LIKE', "{$compname}%");
             }
 
-            $clients = $clients->get();
+            $clients = $clients->orderBy("id", 'asc')->get();
 
             return new DataResponse(200, $clients);
         } catch (\Exception $e) {
